@@ -3,7 +3,7 @@ import 'constants/constants.dart';
 
 class DetailsPage extends StatelessWidget {
 
-  final double coverHeight = 300;
+  final double coverHeight = 280;
 
 final String name;
 final String address;
@@ -19,7 +19,6 @@ const DetailsPage({
 
   @override
   Widget build(BuildContext context){
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -125,12 +124,8 @@ const DetailsPage({
             ],
           ),
         ),
-      ],),
+      ]),
 
     );
   }
-
-
-
-
-}
+  

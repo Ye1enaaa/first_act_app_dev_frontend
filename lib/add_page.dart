@@ -53,6 +53,7 @@ class _AddPageState extends State<AddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Add Contacts'),
       ),
       body: Form( 
@@ -63,44 +64,52 @@ class _AddPageState extends State<AddPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-         Container(
-            height: 300,
-                width: 300,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.green),
+                Container(
+                    height: 300,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey),
+
+                    ),
+                    child: Center(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(child: image == null ?
+                              const Center(child: Text('no image'))
+                                  :Image.file(image,
+                                  width: 300,
+                                  height: 300,
+                                  fit: BoxFit.cover),
+
+                              ),
+                            ],
+                        ),
+                    ),
                 ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                    Expanded(child: image == null ?
-                   const Center(child: Text('no image'))
-                    :Image.file(image)
-                    )]
-                    )
-                  )
-          ),
-          ElevatedButton(
-              style: OutlinedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 15),
-                backgroundColor: Colors.green,
-              ),
-              onPressed: (){
-                imagePicker(ImageSource.gallery);
-              }, child:
-          const Text('Select Image', )),
-          ElevatedButton(
-              style: OutlinedButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 15),
-                backgroundColor: Colors.green,
-              ),
-              onPressed: (){
-                imagePicker(ImageSource.camera);
-              }, child:
-          const Text('Camera', )),
+                ElevatedButton(
+                    style: OutlinedButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 15),
+                      backgroundColor: Colors.green,
+                    ),
+                    onPressed: (){
+                      imagePicker(ImageSource.gallery);
+                      }, child:
+                const Text('Select Image', )),
+
+                ElevatedButton(
+                    style: OutlinedButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 15),
+                      backgroundColor: Colors.green,
+                    ),
+                    onPressed: (){
+                      imagePicker(ImageSource.camera);
+                      },
+                    child: const Text('Camera', )),
                 TextFormField(
                   controller: nameController,
+                  keyboardType: TextInputType.name,
                   decoration: const InputDecoration(
                     labelText: 'Name'
                   ),
@@ -108,6 +117,7 @@ class _AddPageState extends State<AddPage> {
                 const SizedBox(height: 30),
                 TextFormField(
                   controller: addressController,
+                  keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
                     labelText: 'Address'
                   ),
@@ -115,15 +125,18 @@ class _AddPageState extends State<AddPage> {
                 const SizedBox(height: 30),
                 TextFormField(
                   controller: numberController,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     labelText: 'Contact Number'
                   ),
                 ),
                 const SizedBox(height: 30),
-                SizedBox(height: 50,
-                child: ElevatedButton(
-                  onPressed: postData,
-                  child: const Text('SUBMIT')),
+
+                SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                      onPressed: postData,
+                      child: const Text('SUBMIT')),
                 ),
               ],
             ),
@@ -133,3 +146,4 @@ class _AddPageState extends State<AddPage> {
     );
   }
 }
+  
