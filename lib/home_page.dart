@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                 background: slideDelete(),
                 onDismissed: (direction) async {
                   setState ((){
-                    //deleteContact(receiver[index]['id']);
+                    receiver.removeAt(index);
                     deleteData(id);
                   });
                 },
@@ -93,17 +93,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> deleteData(String id) async {
-    final uri = Uri.parse(deleteContactURL);
+    final uri = Uri.parse('$deleteContactURL$id');
     final response = await http.delete(uri);
 
-    if (response.statusCode == 200) {
-      final filtered = receiver.where((element) => element['id'] != id).toList();
+    if (response.statusCode == 200) { 
       setState(() {
-        receiver = filtered;
-
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Successfully deleted!'),
-                backgroundColor: Colors.green));
+        const SnackBar(content: Text('Successfully deleted!'),
+          backgroundColor: Colors.green));
       });
     }
   }
