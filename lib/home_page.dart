@@ -36,69 +36,74 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: const Text('CONTACT INFORMATION'),
       ),
-      body: RefreshIndicator(
-        onRefresh: getData,
-        child: ListView.builder(
-          itemCount: receiver.length,
-          itemBuilder: (context,index){
-            final item = receiver[index] as Map;
-            final id = item['id'].toString();
-            var nameValue = item['contactname'];
-            var addressValue = item['address'];
-            var numValue = item['contactnumber'];
-            var imageValue = item['image'];
-            return Dismissible(
-              key: UniqueKey(),
-                background: slideDelete(),
-                onDismissed: (direction) async {
-                  setState ((){
-                    receiver.removeAt(index);
-                    deleteData(id);
-                  });
-                },
-
-              child: Container(
-                  padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10),
-                  decoration: const BoxDecoration(color: Color.fromARGB(30, 50, 40, 60)),
-                  child: Column(
-                      children: [
-                        ListTile(
-                          leading: CircleAvatar(
-                              radius: 25.0,
-                              backgroundColor: Colors.transparent,
-                              backgroundImage:
-                              NetworkImage('$getImageURL$imageValue')),
-
-                          title: Text( nameValue,
-                            style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black)),
-
-                          trailing: const Icon(Icons.arrow_forward_ios_outlined),
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailsPage(
-                                name: nameValue,
-                                address: addressValue,
-                                number: numValue,
-                                image: imageValue)));
-                            },
-                        ),
-                      ]
-                  )
+      body: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(image: AssetImage('assets/images/background.png'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(Colors.black, BlendMode.dstATop)
               )
-            );
-          },
-        ),
-      ),
+          ),
+
+          child: RefreshIndicator(
+            onRefresh: getData,
+            child: ListView.builder(
+              itemCount: receiver.length,
+              itemBuilder: (context,index){
+                final item = receiver[index] as Map;
+                final id = item['id'].toString();
+                var nameValue = item['contactname'];
+                var addressValue = item['address'];
+                var numValue = item['contactnumber'];
+                var imageValue = item['image'];
+                return Dismissible(
+                    key: UniqueKey(),
+                    background: slideDelete(),
+                    onDismissed: (direction) async {
+                      setState ((){
+                        receiver.removeAt(index);
+                        deleteData(id);
+                      });
+                      },
+                    child: Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10),
+                        decoration: const BoxDecoration(color: Color.fromARGB(70, 10, 100, 100)),
+                        child: Column(
+                            children: [
+                              ListTile(
+                                leading: CircleAvatar(
+                                    radius: 25.0,
+                                    backgroundColor: Colors.transparent,
+                                    backgroundImage:
+                                    NetworkImage('$getImageURL$imageValue')),
+                                title: Text( nameValue,
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white)),
+                                trailing: const Icon(Icons.arrow_forward_ios_outlined, color: Colors.white),
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailsPage(
+                                      name: nameValue,
+                                      address: addressValue,
+                                      number: numValue,
+                                      image: imageValue)));
+                                  },
+                              ),
+                            ]
+                        )
+                    )
+                );
+                },
+            ),
+          )),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: (){
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context)=> const AddPage()));
-          },
+          onPressed: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context)=> const AddPage()));
+            },
           label: const Text('Add contact')),
     );
   }
