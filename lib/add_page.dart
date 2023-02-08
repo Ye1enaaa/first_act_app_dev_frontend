@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:first_app_dev/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'constants/constants.dart';
 
 class AddPage extends StatefulWidget {
@@ -17,6 +19,7 @@ class _AddPageState extends State<AddPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+  var formKey = GlobalKey<FormState>();
 
   Future <void> postData() async{
     final contactname = nameController.text;
@@ -49,6 +52,12 @@ class _AddPageState extends State<AddPage> {
     );
   }
 
+  Future backtoPrevious()async{
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Contact added, please go back to homepage!'),
+      backgroundColor: Colors.green));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,77 +66,104 @@ class _AddPageState extends State<AddPage> {
         title: const Text('Add Contacts'),
       ),
       body: Form( 
+        key: formKey,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                InkWell(
+                  onTap: (){
+                    imagePicker(ImageSource.gallery);
+                  },
+                  child: Ink(
+                    child: Container(
                     height: 300,
-                    width: 300,
+                    width: 350,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey),
-
+                      border: Border.all(color: Colors.black),
                     ),
                     child: Center(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(child: image == null ?
-                              const Center(child: Text('no image'))
-                                  :Image.file(image,
-                                  width: 300,
-                                  height: 300,
-                                  fit: BoxFit.cover),
-
-                              ),
-                            ],
-                        ),
+                      child: Column(
+                        children: [
+                        Expanded(child: image == null ?
+                       const Center(child: Text('Tap to upload image'))
+                        :Image.file(image,
+                        width: 350,
+                        height: 300,
+                        fit: BoxFit.cover,
+                        )
+                        )],
+                      ), 
                     ),
+                            ),
+                  ),
                 ),
-                ElevatedButton(
-                    style: OutlinedButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 15),
-                      backgroundColor: Colors.green,
+                const SizedBox(height: 40),
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(Radius.circular(15))
+                  ),
+                  child: TextFormField(
+                    validator: (value) {
+                      if(value!.isEmpty){
+                        return 'Please enter name';
+                      }
+                    },
+                    style: const TextStyle(color: Colors.white),
+                    controller: nameController,
+                    keyboardType: TextInputType.name,
+                    decoration: const InputDecoration(
+                      labelStyle: TextStyle(color: Colors.white),
+                      border: InputBorder.none,
+                      labelText: 'Name'
                     ),
-                    onPressed: (){
-                      imagePicker(ImageSource.gallery);
-                      }, child:
-                const Text('Select Image', )),
-
-                ElevatedButton(
-                    style: OutlinedButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 15),
-                      backgroundColor: Colors.green,
-                    ),
-                    onPressed: (){
-                      imagePicker(ImageSource.camera);
-                      },
-                    child: const Text('Camera', )),
-                TextFormField(
-                  controller: nameController,
-                  keyboardType: TextInputType.name,
-                  decoration: const InputDecoration(
-                    labelText: 'Name'
                   ),
                 ),
                 const SizedBox(height: 30),
-                TextFormField(
-                  controller: addressController,
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Address'
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(Radius.circular(15))
+                  ),
+                  child: TextFormField(
+                    validator: (value) {
+                      if(value!.isEmpty){
+                        return 'Please enter address';
+                      }
+                    },
+                    style: const TextStyle(color: Colors.white),
+                    controller: addressController,
+                    keyboardType: TextInputType.text,
+                    decoration: const InputDecoration(
+                      labelStyle: TextStyle(color: Colors.white),
+                      border: InputBorder.none,
+                      labelText: 'Address'
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
-                TextFormField(
-                  controller: numberController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Contact Number'
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.all(Radius.circular(15))
+                  ),
+                  child: TextFormField(
+                    validator: (value) {
+                      if(value!.isEmpty){
+                        return 'Please enter contact number';
+                      }
+                    },
+                    style: const TextStyle(color: Colors.white),
+                    controller: numberController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelStyle: TextStyle(color: Colors.white),
+                      border: InputBorder.none,
+                      labelText: 'Contact Number'
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -135,7 +171,14 @@ class _AddPageState extends State<AddPage> {
                 SizedBox(
                   height: 50,
                   child: ElevatedButton(
-                      onPressed: postData,
+                      onPressed: ()async{
+                        if(formKey.currentState!.validate()){
+                          setState((){
+                            postData();
+                            backtoPrevious();
+                          });
+                        }
+                      },
                       child: const Text('SUBMIT')),
                 ),
               ],

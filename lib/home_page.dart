@@ -4,6 +4,7 @@ import 'package:first_app_dev/add_page.dart';
 import 'package:first_app_dev/details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:page_transition/page_transition.dart';
 
 import 'constants/constants.dart';
 class HomePage extends StatefulWidget {
@@ -29,6 +30,44 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
+  Future<void> showMyDialog(BuildContext context, String id, index) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Confirm Deletion?'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children:const  <Widget>[
+              //Text('Confirm Deletion?'),
+              Text('Would you like to delete this contact?'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          ElevatedButton(
+            child: const Text('Yes'),
+            onPressed: () async{
+              setState(() {
+                deleteData(id);
+                receiver.removeAt(index);
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+          ElevatedButton(
+            child: const Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +82,6 @@ class _HomePageState extends State<HomePage> {
                   colorFilter: ColorFilter.mode(Colors.black, BlendMode.dstATop)
               )
           ),
-
           child: RefreshIndicator(
             onRefresh: getData,
             child: ListView.builder(
@@ -60,8 +98,7 @@ class _HomePageState extends State<HomePage> {
                     background: slideDelete(),
                     onDismissed: (direction) async {
                       setState ((){
-                        receiver.removeAt(index);
-                        deleteData(id);
+                        showMyDialog(context, id, index);
                       });
                       },
                     child: Container(
@@ -83,11 +120,19 @@ class _HomePageState extends State<HomePage> {
                                         color: Colors.white)),
                                 trailing: const Icon(Icons.arrow_forward_ios_outlined, color: Colors.white),
                                 onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailsPage(
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      child: DetailsPage(
                                       name: nameValue,
                                       address: addressValue,
                                       number: numValue,
-                                      image: imageValue)));
+                                      image: imageValue), 
+                                      type: PageTransitionType.rightToLeft,
+                                      duration: const Duration(milliseconds: 250),
+                                      reverseDuration: const Duration(milliseconds: 250)
+                                      )
+                                  );
                                   },
                               ),
                             ]
@@ -96,13 +141,18 @@ class _HomePageState extends State<HomePage> {
                 );
                 },
             ),
-          )),
+          ),
+          ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: (){
             Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context)=> const AddPage()));
+                PageTransition(
+                  child: const AddPage(),
+                  type: PageTransitionType.bottomToTop,
+                  duration: const Duration(milliseconds: 300),
+                  reverseDuration: const Duration(milliseconds: 300)
+                ));
             },
           label: const Text('Add contact')),
     );
