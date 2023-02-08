@@ -52,20 +52,31 @@ class _HomePageState extends State<HomePage> {
                 background: slideDelete(),
                 onDismissed: (direction) async {
                   setState ((){
-                    //deleteContact(receiver[index]['id']);
+                    receiver.removeAt(index);
                     deleteData(id);
                   });
                 },
 
               child: Container(
-                  padding: const EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(10),
                   margin: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10),
                   decoration: const BoxDecoration(color: Color.fromARGB(30, 50, 40, 60)),
                   child: Column(
                       children: [
                         ListTile(
-                          leading: CircleAvatar(child: Image.network('$getImageURL$imageValue'),),
-                          title: Text(nameValue),
+                          leading: CircleAvatar(
+                              radius: 25.0,
+                              backgroundColor: Colors.transparent,
+                              backgroundImage:
+                              NetworkImage('$getImageURL$imageValue')),
+
+                          title: Text( nameValue,
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black)),
+
+                          trailing: const Icon(Icons.arrow_forward_ios_outlined),
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailsPage(
                                 name: nameValue,
@@ -93,7 +104,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> deleteData(String id) async {
-    final uri = Uri.parse(deleteContactURL);
+    final uri = Uri.parse('$deleteContactURL$id');
     final response = await http.delete(uri);
 
     if (response.statusCode == 200) {
