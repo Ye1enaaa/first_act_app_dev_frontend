@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   List receiver = <dynamic>[];
+
   Future<void> getData() async {
     final uri = Uri.parse(getContactURL);
     final response = await http.get(uri);
@@ -32,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('CONTACT INFORMATION'),
       ),
       body: RefreshIndicator(
@@ -47,23 +49,84 @@ class _HomePageState extends State<HomePage> {
             var imageValue = item['image'];
             return Dismissible(
               key: UniqueKey(),
-              child: ListTile(
-                leading: CircleAvatar(child: Image.network('$getImageURL$imageValue'),),
-                title: Text(nameValue),
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailsPage(
-                    name: nameValue, 
-                    address: addressValue, 
-                    number: numValue, 
-                    image: imageValue)));
+                background: slideDelete(),
+                onDismissed: (direction) async {
+                  setState ((){
+                    //deleteContact(receiver[index]['id']);
+                    deleteData(id);
+                  });
                 },
-              ),
+
+              child: Container(
+                  padding: const EdgeInsets.all(5),
+                  margin: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 10),
+                  decoration: const BoxDecoration(color: Color.fromARGB(30, 50, 40, 60)),
+                  child: Column(
+                      children: [
+                        ListTile(
+                          leading: CircleAvatar(child: Image.network('$getImageURL$imageValue'),),
+                          title: Text(nameValue),
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailsPage(
+                                name: nameValue,
+                                address: addressValue,
+                                number: numValue,
+                                image: imageValue)));
+                            },
+                        ),
+                      ]
+                  )
+              )
             );
-          }),
+          },
+        ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddPage()));
-      },child: const Icon(Icons.add),),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: (){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context)=> const AddPage()));
+          },
+          label: const Text('Add contact')),
+    );
+  }
+
+  Future<void> deleteData(String id) async {
+    final uri = Uri.parse(deleteContactURL);
+    final response = await http.delete(uri);
+
+    if (response.statusCode == 200) {
+      final filtered = receiver.where((element) => element['id'] != id).toList();
+      setState(() {
+        receiver = filtered;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Successfully deleted!'),
+                backgroundColor: Colors.green));
+      });
+    }
+  }
+
+  Widget slideDelete() {
+    return Container(
+      color: Colors.red,
+      child: Align(alignment: Alignment.centerRight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: const <Widget>[
+            Text(
+              " Delete Contact List",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.left,
+            ),
+            SizedBox(width: 20),
+          ],
+        ),
+      ),
     );
   }
 }

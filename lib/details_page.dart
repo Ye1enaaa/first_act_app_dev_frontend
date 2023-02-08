@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'constants/constants.dart';
 
 class DetailsPage extends StatelessWidget {
+
+  final double coverHeight = 280;
+
 final String name;
 final String address;
 final String number;
@@ -18,11 +21,43 @@ const DetailsPage({
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
+
         title: const Text('Details Page'),
       ),
-      body: ListTile(
-        leading: CircleAvatar(child: Image.network(getImageURL + image)),
-      ),
+      body: ListView(
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        Stack(
+          //clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Column(
+                children: [
+                  Image.network(getImageURL + image,
+                      width: double.infinity,
+                      height: coverHeight,
+                      fit: BoxFit.cover),
+                ],
+
+            ),
+            const SizedBox(height: 30),
+
+            Column(
+
+            )
+          ],
+        ),
+
+            ],),
+
+
+
+
+      // body: ListTile(
+      //   leading: CircleAvatar(child: Image.network(getImageURL + image)),
+      //   //title:
+      // ),
     );
   }
 }
